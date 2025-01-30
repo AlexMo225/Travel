@@ -1,0 +1,213 @@
+openapi: 3.0.0
+info:
+  title: Travel Packing API
+  description: API de gestion des listes de voyage
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /auth/register:
+    post:
+      summary: Inscription d'un utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "201":
+          description: Utilisateur créé
+        "400":
+          description: Erreur de validation
+  /auth/login:
+    post:
+      summary: Connexion d'un utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Connexion réussie
+        "400":
+          description: Erreur de connexion
+  /trips:
+    get:
+      summary: Récupérer tous les voyages
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Liste des voyages
+    post:
+      summary: Créer un voyage
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                destination:
+                  type: string
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+      responses:
+        "201":
+          description: Voyage créé
+  /trips/{id}:
+    get:
+      summary: Récupérer un voyage par ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Voyage récupéré
+        "404":
+          description: Voyage non trouvé
+    put:
+      summary: Modifier un voyage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                destination:
+                  type: string
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+      responses:
+        "200":
+          description: Voyage mis à jour
+    delete:
+      summary: Supprimer un voyage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Voyage supprimé
+  /items:
+    post:
+      summary: Ajouter un item
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                quantity:
+                  type: integer
+                tripId:
+                  type: integer
+      responses:
+        "201":
+          description: Item ajouté
+  /items/{id}:
+    get:
+      summary: Récupérer un item par ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Item récupéré
+        "404":
+          description: Item non trouvé
+    put:
+      summary: Modifier un item
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                quantity:
+                  type: integer
+      responses:
+        "200":
+          description: Item mis à jour
+    delete:
+      summary: Supprimer un item
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Item supprimé
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
