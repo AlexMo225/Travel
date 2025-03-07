@@ -1,14 +1,25 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
-module.exports = (req, res, next) => {
-    const token = req.header("Authorization");
-    if (!token) return res.status(401).json({ message: "Accès refusé. Token requis." });
-
-    try {
-        const verified = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = verified;
-        next();
-    } catch (error) {
-        res.status(400).json({ message: "Token invalide." });
+const authMiddleware = async (req, res, next) => {
+  try {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) {
+      throw new Error("Token manquant");
     }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findOne({ where: { id: decoded.id } });
+
+    if (!user) {
+      throw new Error("Utilisateur introuvable");
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Authentification requise", error: error.message });
+  }
 };
+
+export default authMiddleware;

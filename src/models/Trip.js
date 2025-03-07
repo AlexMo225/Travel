@@ -1,32 +1,38 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
-const User = require("./User");
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+import User from "./User.js";
 
 const Trip = sequelize.define("Trip", {
-    destination: {
-        type: DataTypes.STRING,
-        allowNull: false,
+  destination: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  startDate: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    validate: {
+      isDate: true, 
     },
-    startDate: {
-        type: DataTypes.DATE,
-        allowNull: false,
+  },
+  endDate: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    validate: {
+      isDate: true, 
     },
-    endDate: {
-        type: DataTypes.DATE,
-        allowNull: false,
+  },
+  UserId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: "id",
     },
-    UserId: { 
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,
-            key: "id",
-        },
-        onDelete: "CASCADE",
-    },
+    onDelete: "CASCADE",
+  },
 });
 
 User.hasMany(Trip, { foreignKey: "UserId" });
 Trip.belongsTo(User, { foreignKey: "UserId" });
 
-module.exports = Trip;
+export default Trip;

@@ -1,12 +1,15 @@
-const { Sequelize } = require("sequelize");
+import { Sequelize } from "sequelize";
 
 const sequelize = new Sequelize({
     dialect: "sqlite",
-    storage: "./travel_packing_list.sqlite",
+    storage: process.env.NODE_ENV === "test" ? ":memory:" : "./travel_packing_list.sqlite",
+    logging: false,
 });
 
-sequelize.authenticate()
-    .then(() => console.log("Connexion à SQLite réussie !"))
-    .catch((err) => console.error("Erreur de connexion à SQLite :", err));
+if (process.env.NODE_ENV !== 'test') {
+    sequelize.authenticate()
+        .then(() => console.log("Connexion à SQLite réussie !"))
+        .catch((err) => console.error("Erreur de connexion à SQLite :", err));
+}
 
-module.exports = sequelize;
+export default sequelize;
